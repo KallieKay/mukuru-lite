@@ -1,0 +1,49 @@
+{
+  "fees": {
+    "flatCents": 2000,
+    "percentBps": 167,
+    "roundDownToCents": 100
+  },
+  "limits": {
+    "minCents": 5000,
+    "maxCents": 500000,
+    "dailyMaxCents": 500000
+  },
+  "corridors": {
+    "ZW": {
+      "label": "Zimbabwe",
+      "currency": "USD",
+      "symbol": "$",
+      "rate": 0.065,
+      "minRate": 0.06,
+      "maxRate": 0.07
+    }
+  },
+  "users": [
+    {
+      "id": "thandi",
+      "name": "Thandi",
+      "phone": "+27000000001",
+      "pin": "1234",
+      "language": null,
+      "recipients": [
+        {
+          "id": "mama",
+          "name": "Mama",
+          "city": "Harare",
+          "countryCode": "ZW",
+          "phone": "+263770000001",
+          "language": "sn"
+        },
+        {
+          "id": "tendai",
+          "name": "Tendai",
+          "city": "Bulawayo",
+          "countryCode": "ZW",
+          "phone": "+263770000002",
+          "language": "en"
+        }
+      ]
+    }
+  ]
+}

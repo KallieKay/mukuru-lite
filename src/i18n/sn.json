@@ -1,0 +1,55 @@
+{
+  "language": "ChiShona",
+  "_note": "First draft. Have a native speaker review before judging.",
+  "recipients": {
+    "mama": "Amai",
+    "tendai": "Tendai"
+  },
+  "stages": {
+    "sent": "Yatumirwa",
+    "in_transit": "Iri munzira",
+    "ready": "Yakagadzirira kutorwa",
+    "collected": "Yatorwa"
+  },
+  "ussd": {
+    "main": "Mukuru\n1 Tumira mari\n2 Mari yangu iripi?\n3 Rubatsiro\n4 Mutauro",
+    "sendTo": "Tumira kuna:\n{options}",
+    "amount": "Isa mari yekutumira ({min}-{max}):",
+    "quote": "Unobhadhara {amount}\nMuripo {fee}\n{name} vachawana {received}\nMutengo wakachengetwa min {minutes}\n1 Simbisa\n2 Misa",
+    "pin": "Isa PIN yako ye-4:",
+    "sent": "Yatumirwa! Ref {ref}.\nTichakunyorera kana {name} vatora.",
+    "track": "{ref} kuna {name}:\n{stages}",
+    "noTransfer": "Hapana kutumirwa. Daidza zvakare, sarudza 1.",
+    "help": "Daidza *130*999#, sarudza 1 kutumira. Vamiririri: Muvhuro-Mugovera 8am-6pm.",
+    "languageReset": "Mutauro wabviswa. Daidza zvakare.",
+    "cancelled": "Kumiswa. Hapana chatumirwa.",
+    "invalid": "Sarudzo haina kunaka. Daidza zvakare.",
+    "error": "Basa rakabatikana. Hapana chatumirwa. Daidza zvakare.",
+    "unknownNumber": "Hatizivi nhamba iyi. Nyoresa kumumiririri waMukuru.",
+    "errors": {
+      "invalid_amount": "Isa mari kubva pa{min} kusvika pa{max}. Daidza zvakare.",
+      "daily_limit": "Inopfuura mugomo wako wezuva. Daidza zvakare.",
+      "wrong_pin": "PIN haisi iyo. Mikana yasara: {triesLeft}. Daidza zvakare.",
+      "pin_locked": "Wakaedza kakawanda. Edza gare gare.",
+      "quote_expired": "Mutengo wakapera. Daidza zvakare.",
+      "quote_invalid": "Mutengo wakapera. Daidza zvakare."
+    }
+  },
+  "sms": {
+    "sender": {
+      "sent": "Mukuru: {amount} yatumirwa kuna {name}. Ref {ref}. {name} vachawana {received}. Chengeta meseji iyi.",
+      "in_transit": "Mukuru: {ref} iri munzira kuna {name}.",
+      "ready": "Mukuru: {ref} yakagadzirira. {name} vanogona kutora {received} kumumiririri waMukuru.",
+      "collected": "Mukuru: {name} vatora {received} ({ref}). Hapana chikonzero chekufona."
+    },
+    "recipient": {
+      "ready": "Une {received} kubva ku{sender}.\nRef {ref}. Kodhi {code}.\nTora ID nekodhi kumumiririri waMukuru. Usaudza munhu kodhi yako.",
+      "collected": "Watora {received}. Ref {ref}.\n{sender} aziviswa. Ndatenda!"
+    }
+  },
+  "voice": {
+    "recipient": {
+      "ready": "Mhoro {name}. Mari yenyu kubva kuna {sender} yasvika. Endai kuMukuru nechitupa chenyu."
+    }
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "language": "English",
+  "recipients": {
+    "mama": "Mama",
+    "tendai": "Tendai"
+  },
+  "stages": {
+    "sent": "Sent",
+    "in_transit": "On the way",
+    "ready": "Ready to collect",
+    "collected": "Collected"
+  },
+  "ussd": {
+    "main": "Mukuru\n1 Send money\n2 Where is my money?\n3 Help\n4 Language",
+    "sendTo": "Send to:\n{options}",
+    "amount": "Amount to send ({min}-{max}):",
+    "quote": "You pay {amount}\nFee {fee}\n{name} gets {received}\nRate locked {minutes} min\n1 Confirm\n2 Cancel",
+    "pin": "Enter your 4-digit PIN:",
+    "sent": "Sent! Ref {ref}.\nWe will SMS you when {name} collects.",
+    "track": "{ref} to {name}:\n{stages}",
+    "noTransfer": "No transfers yet. Dial again and choose 1 to send.",
+    "help": "Dial *130*999# and choose 1 to send. Agents open Mon-Sat 8am-6pm.",
+    "languageReset": "Language cleared. Dial again to choose.",
+    "cancelled": "Cancelled. Nothing was sent.",
+    "invalid": "Invalid choice. Dial again.",
+    "error": "Service busy. Nothing was sent. Dial again.",
+    "unknownNumber": "This number is not registered. Visit a Mukuru agent to sign up.",
+    "errors": {
+      "invalid_amount": "Amount must be {min}-{max}. Dial again.",
+      "daily_limit": "That is above your daily limit. Dial again.",
+      "wrong_pin": "Wrong PIN. {triesLeft} tries left. Dial again to retry.",
+      "pin_locked": "Too many tries. Try again later.",
+      "quote_expired": "Rate expired. Dial again for a new rate.",
+      "quote_invalid": "Rate expired. Dial again for a new rate."
+    }
+  },
+  "sms": {
+    "sender": {
+      "sent": "Mukuru: {amount} sent to {name}. Ref {ref}. {name} gets {received}. Keep this SMS.",
+      "in_transit": "Mukuru: {ref} is on the way to {name}.",
+      "ready": "Mukuru: {ref} is ready. {name} can collect {received} at a Mukuru agent.",
+      "collected": "Mukuru: {name} collected {received} ({ref}). No need to call."
+    },
+    "recipient": {
+      "ready": "You have {received} from {sender}.\nRef {ref}. Code {code}.\nTake your ID and code to a Mukuru agent. Never share your code.",
+      "collected": "You collected {received}. Ref {ref}.\n{sender} has been told. Thank you!"
+    }
+  },
+  "voice": {
+    "recipient": {
+      "ready": "Hello {name}. Your money from {sender} has arrived. Take your ID to a Mukuru agent."
+    }
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "name": "money-home",
+  "version": "1.0.0",
+  "description": "SheHacks x Mukuru: one transfer thread for Thandi and Mama over USSD and SMS",
+  "private": true,
+  "main": "src/server.js",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "demo": "DEMO=1 FX_STATIC=1 STEP_MS=3000 node src/server.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}

@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Money Home Simulator</title>
+  <!-- No CDN scripts: works with zero internet once the server is running. -->
+  <link rel="stylesheet" href="css/simulator.css">
+</head>
+<body>
+
+<div class="phone" aria-label="Thandi's phone">
+  <div class="screen">
+    <div class="statusbar"><span>Network &#9602;</span><span id="clock"></span></div>
+
+    <div class="display">
+      <div class="number" id="number" aria-live="polite"></div>
+      <div class="hint">Dial *130*999# &middot; or chain it: *130*999*1*1#</div>
+    </div>
+
+    <div class="keypad" id="keypad" role="group" aria-label="Keypad">
+      <button>1</button><button>2</button><button>3</button>
+      <button>4</button><button>5</button><button>6</button>
+      <button>7</button><button>8</button><button>9</button>
+      <button>*</button><button>0</button><button>#</button>
+    </div>
+    <div class="callrow">
+      <button class="call" id="call" aria-label="Call">&#9990;</button>
+      <button class="del" id="delete" aria-label="Delete">&#9003;</button>
+    </div>
+
+    <div class="overlay" id="overlay">
+      <div class="dialog" role="dialog" aria-modal="true" aria-live="assertive">
+        <div class="msg" id="message"></div>
+        <input id="reply" inputmode="numeric" autocomplete="off" aria-label="Reply">
+        <div class="actions">
+          <button id="cancel">Cancel</button>
+          <button id="send">Send</button>
+          <button id="ok">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Receiver view. Also runs on its own (second laptop or phone) at /mama.html -->
+<iframe class="mama" src="mama.html" title="Mama's phone in Harare"></iframe>
+
+<div class="panel">
+  <div class="card">
+    <h2>Thandi's SMS inbox</h2>
+    <div class="sms-list" id="inbox" aria-live="polite"><div class="empty">No messages yet.</div></div>
+  </div>
+
+  <div class="card">
+    <h2>Mukuru agent, Harare</h2>
+    <form class="agent" id="agent-form" autocomplete="off">
+      <label>Reference <input id="agent-ref" placeholder="MK12345" required></label>
+      <label>Mama's code <input id="agent-code" inputmode="numeric" maxlength="6" placeholder="from her SMS" required></label>
+      <label class="check"><input id="agent-id" type="checkbox"> I checked her ID</label>
+      <div class="controls"><button class="primary" type="submit">Pay out</button></div>
+    </form>
+    <div class="note" id="agent-note" role="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>Demo controls</h2>
+    <div class="controls">
+      <button class="primary" id="quick-dial">Dial *130*999#</button>
+      <button id="retry">Simulate network retry</button>
+      <button id="reset">Reset demo</button>
+    </div>
+    <div class="note" id="note" role="status"></div>
+  </div>
+
+  <div class="card">
+    <h2>Gateway (for the team)</h2>
+    <label>Session timeout (s)<input id="timeout" type="number" min="5" value="60"></label>
+    <label class="check"><input id="drop-next" type="checkbox"> Drop the next reply (the network fails after the request arrives)</label>
+    <div class="dev" id="dev">No request yet.</div>
+  </div>
+</div>
+
+<script src="js/simulator.js"></script>
+</body>
+</html>

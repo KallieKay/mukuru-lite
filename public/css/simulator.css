@@ -1,0 +1,210 @@
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  padding: 32px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 32px;
+  justify-content: center;
+  align-items: flex-start;
+  font-family: system-ui, -apple-system, sans-serif;
+  background: #e8e4dc;
+  color: #1b1b1b;
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: #666;
+}
+
+/* ── Thandi's phone ─────────────────────────────────────────────────── */
+.phone {
+  flex-shrink: 0;
+  width: 300px;
+  height: 600px;
+  padding: 14px;
+  border-radius: 36px;
+  background: #1c1c1e;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, .35);
+}
+
+.screen {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #f4f4f4;
+}
+
+.statusbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
+  font-size: 12px;
+  color: #444;
+}
+
+.display {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 16px 8px;
+  text-align: center;
+}
+.display .number { min-height: 40px; font-size: 28px; letter-spacing: .02em; word-break: break-all; }
+.display .hint   { margin-top: 4px; font-size: 12px; color: #888; }
+
+.keypad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 8px 20px;
+}
+.keypad button {
+  height: 52px;
+  border: none;
+  border-radius: 26px;
+  background: #e2e2e2;
+  font-size: 22px;
+  cursor: pointer;
+}
+.keypad button:active { background: #cfcfcf; }
+
+.callrow {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  align-items: center;
+  padding: 4px 20px 20px;
+}
+.call {
+  grid-column: 2;
+  justify-self: center;
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 50%;
+  background: #1faa59;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+.del {
+  justify-self: center;
+  width: 52px;
+  height: 52px;
+  border: none;
+  background: none;
+  font-size: 22px;
+  color: #555;
+  cursor: pointer;
+}
+
+/* ── USSD dialog (modelled on the stock Android one) ───────────────── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, .45);
+}
+.overlay.open { display: flex; }
+
+.dialog {
+  width: 100%;
+  padding: 20px 20px 8px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .3);
+}
+.dialog .msg { font-size: 15px; line-height: 1.45; white-space: pre-wrap; }
+.dialog .msg.loading { color: #444; }
+.dialog input {
+  width: 100%;
+  margin-top: 14px;
+  padding: 6px 2px;
+  border: none;
+  border-bottom: 2px solid #1faa59;
+  outline: none;
+  background: transparent;
+  font-size: 16px;
+}
+.dialog .actions { display: flex; justify-content: flex-end; gap: 4px; margin-top: 12px; }
+.dialog .actions button {
+  min-height: 48px;
+  padding: 12px 14px;
+  border: none;
+  background: none;
+  color: #128c4a;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+/* ── Mama's phone (iframe) ──────────────────────────────────────────── */
+.mama { flex-shrink: 0; width: 260px; height: 640px; border: none; }
+
+/* ── Side panel ─────────────────────────────────────────────────────── */
+.panel { display: flex; flex-direction: column; gap: 20px; width: 360px; max-width: 100%; }
+
+.card { padding: 16px; border-radius: 12px; background: #fff; box-shadow: 0 2px 8px rgba(0, 0, 0, .08); }
+
+.sms-list { display: flex; flex-direction: column; gap: 8px; max-height: 260px; overflow-y: auto; }
+.sms {
+  padding: 8px 10px;
+  border-left: 3px solid #1faa59;
+  border-radius: 4px;
+  background: #eef7f1;
+  font-size: 14px;
+  white-space: pre-wrap;
+}
+.sms time { display: block; margin-top: 2px; font-size: 11px; color: #777; }
+.empty    { font-size: 13px; color: #888; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 8px; }
+.controls button {
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1.5px solid #1b1b1b;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.controls button.primary { background: #1b1b1b; color: #fff; }
+
+.note { min-height: 18px; margin-top: 8px; font-size: 13px; color: #444; }
+
+.dev  { margin-top: 10px; font: 12px/1.5 ui-monospace, Menlo, monospace; color: #333; white-space: pre-wrap; word-break: break-all; }
+.dev .over { color: #c0392b; font-weight: 700; }
+
+label             { font-size: 13px; }
+#timeout          { width: 60px; margin-left: 6px; }
+label.check       { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+
+/* ── Agent payout form ──────────────────────────────────────────────── */
+.agent            { display: flex; flex-direction: column; gap: 8px; }
+.agent label      { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.agent label input:not([type="checkbox"]) {
+  width: 150px;
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1.5px solid #bbb;
+  border-radius: 6px;
+  font-size: 14px;
+}
+.agent label.check { justify-content: flex-start; margin-top: 2px; }
+.agent .controls   { margin-top: 4px; }
+.note.error        { color: #c0392b; }
+.note.ok           { color: #128c4a; }
