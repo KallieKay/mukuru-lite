@@ -52,6 +52,24 @@
     <div class="sms-list" id="inbox" aria-live="polite"><div class="empty">No messages yet.</div></div>
   </div>
 
+  <div class="card fx-card" aria-live="polite">
+    <h2>Exchange rate</h2>
+    <div class="fx-grid">
+      <div class="fx-box">
+        <div class="fx-label">Market now</div>
+        <div class="fx-value" id="fx-market">$0.065</div>
+      </div>
+      <div class="fx-box fx-box-muted">
+        <div class="fx-label">Locked on last transfer</div>
+        <div class="fx-value" id="fx-locked">$0.065</div>
+      </div>
+    </div>
+    <div class="fx-actions">
+      <button type="button" id="fx-up">Rate up</button>
+      <button type="button" id="fx-down">Rate down</button>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Mukuru agent, Harare</h2>
     <form class="agent" id="agent-form" autocomplete="off">

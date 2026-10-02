@@ -47,6 +47,21 @@ class FxService {
     }
   }
 
+  /** Moves one corridor by a small demo step up or down without changing locked quotes. */
+  move(code = Object.keys(this.corridors)[0], direction = 'up') {
+    const corridor = this.corridors[code];
+    if (!corridor) throw new AppError('unsupported_corridor', 400, { code });
+    if (direction !== 'up' && direction !== 'down') {
+      throw new AppError('invalid_fx_direction', 400, { direction });
+    }
+
+    const current = this.rates.get(code).rate;
+    const delta = direction === 'up' ? 0.001 : -0.001;
+    const next = Math.min(corridor.maxRate, Math.max(corridor.minRate, Number((current + delta).toFixed(5))));
+    this.rates.set(code, { rate: next, updatedAt: this.now() });
+    return this.get(code);
+  }
+
   /** @returns {{ code: string, rate: number, updatedAt: number, currency: string, symbol: string, label: string }} */
   get(code) {
     const corridor = this.corridors[code];

@@ -184,6 +184,55 @@ h2 {
 }
 .controls button.primary { background: #1b1b1b; color: #fff; }
 
+.fx-card {
+  border: 2px solid #e43d39;
+  background: #f4f0e5;
+  box-shadow: none;
+}
+.fx-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 6px;
+}
+.fx-box {
+  padding: 12px 10px 10px;
+  border-radius: 10px;
+  background: #f7f6ee;
+  border: 1.5px solid #0b765f;
+  min-height: 82px;
+}
+.fx-box-muted {
+  background: #dfeeea;
+}
+.fx-label {
+  font-size: 12px;
+  line-height: 1.4;
+  color: #1e2f3d;
+  margin-bottom: 6px;
+}
+.fx-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #0b1d2c;
+}
+.fx-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.fx-actions button {
+  flex: 1;
+  min-height: 38px;
+  border: 2px solid #0f7a67;
+  border-radius: 8px;
+  background: #fff;
+  color: #0f7a67;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .note { min-height: 18px; margin-top: 8px; font-size: 13px; color: #444; }
 
 .dev  { margin-top: 10px; font: 12px/1.5 ui-monospace, Menlo, monospace; color: #333; white-space: pre-wrap; word-break: break-all; }

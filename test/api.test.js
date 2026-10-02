@@ -155,6 +155,36 @@ test('REST API', async t => {
     assert.equal(early.body.error, 'not_ready');
   });
 
+  await t.test('demo FX movement is not available outside demo mode', async () => {
+    assert.equal((await api('/api/demo/fx-move', { method: 'POST' })).status, 404);
+  });
+
+  await t.test('FX movement updates the market but not the locked transfer rate', async () => {
+    const server = await startTestServer({ DEMO: '1' });
+    t.after(() => server.close());
+    const { api } = server;
+
+    const quote = await (async () => (await api('/api/quotes', {
+      method: 'POST', body: { amount: '1500', recipientId: 'mama' },
+    })).body)();
+    const marketBefore = (await api('/api/fx')).body.find(r => r.code === 'ZW').rate;
+    const lockedRate = quote.rate;
+
+    const moved = await api('/api/demo/fx-move', {
+      method: 'POST', body: { direction: 'up' },
+    });
+    assert.equal(moved.status, 200);
+    assert.ok((await api('/api/fx')).body.find(r => r.code === 'ZW').rate > marketBefore);
+
+    const transfer = await api('/api/transfers', {
+      method: 'POST', headers: { 'Idempotency-Key': 'k-fx-lock' }, body: { quoteId: quote.quoteId, pin: '1234' },
+    });
+    assert.equal(transfer.status, 201);
+    assert.equal(transfer.body.rate, lockedRate);
+    assert.equal(transfer.body.amountCents, quote.amountCents);
+    assert.equal(transfer.body.receivedCents, quote.receivedCents);
+  });
+
   await t.test('demo reset is not available outside demo mode', async () => {
     assert.equal((await api('/api/demo/reset', { method: 'POST' })).status, 404);
   });

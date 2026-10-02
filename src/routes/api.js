@@ -81,6 +81,13 @@ function createApiRouter({ fx, users, quotes, transfers, notifications }, { demo
   });
 
   // Wipes all state back to the seed. Only exists when the server runs with DEMO=1.
+  router.post('/demo/fx-move', (req, res) => {
+    if (!demoMode) throw new AppError('not_found', 404);
+    const code = req.body?.code ?? 'ZW';
+    const direction = req.body?.direction ?? 'up';
+    res.json(fx.move(code, direction));
+  });
+
   router.post('/demo/reset', (req, res) => {
     if (!demoMode) throw new AppError('not_found', 404);
     resetDemo();

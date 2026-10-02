@@ -25,6 +25,12 @@ const el = {
   dev:     $('dev'),
   timeout: $('timeout'),
   dropNext: $('drop-next'),
+  fx: {
+    market: $('fx-market'),
+    locked: $('fx-locked'),
+    up: $('fx-up'),
+    down: $('fx-down'),
+  },
   agent: {
     form:      $('agent-form'),
     ref:       $('agent-ref'),
@@ -188,6 +194,50 @@ async function refreshInbox() {
   }));
 }
 
+function formatRate(value) {
+  return `$${Number(value).toFixed(3)}`;
+}
+
+async function refreshFxCard() {
+  let fx;
+  try {
+    fx = await fetch('/api/fx').then(r => r.json());
+  } catch {
+    return;
+  }
+
+  const market = fx.find(r => r.code === 'ZW');
+  const marketRate = market ? formatRate(market.rate) : '—';
+  el.fx.market.textContent = marketRate;
+
+  let transfer;
+  try {
+    transfer = await fetch('/api/transfers').then(r => r.json());
+  } catch {
+    el.fx.locked.textContent = marketRate;
+    return;
+  }
+
+  const latest = transfer.at(-1);
+  el.fx.locked.textContent = latest ? formatRate(latest.rate) : marketRate;
+}
+
+async function demoFxMove(direction) {
+  const res = await fetch('/api/demo/fx-move', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ direction }),
+  });
+  if (!res.ok) {
+    showNote('FX movement is only available in demo mode.', 'error');
+    return;
+  }
+  const nextRate = await res.json();
+  el.fx.market.textContent = formatRate(nextRate.rate);
+  await refreshFxCard();
+  showNote('Market rate moved. Quotes already on a phone keep their locked rate.', 'ok');
+}
+
 // ── Agent payout ─────────────────────────────────────────────────────────────
 const AGENT_ERRORS = {
   id_check_required: 'Check her ID first.',
@@ -265,6 +315,8 @@ $('call').addEventListener('click', () => dial(el.number.textContent));
 $('quick-dial').addEventListener('click', () => { el.number.textContent = SERVICE_CODE; dial(SERVICE_CODE); });
 $('retry').addEventListener('click', simulateRetry);
 $('reset').addEventListener('click', resetDemo);
+el.fx.up.addEventListener('click', () => demoFxMove('up'));
+el.fx.down.addEventListener('click', () => demoFxMove('down'));
 el.agent.form.addEventListener('submit', payOut);
 el.send.addEventListener('click', sendReply);
 el.cancel.addEventListener('click', cancelSession);
@@ -283,4 +335,5 @@ document.addEventListener('keydown', e => {
 });
 
 refreshInbox();
-setInterval(() => { refreshInbox(); suggestReadyRef(); }, POLL_MS);
+refreshFxCard();
+setInterval(() => { refreshInbox(); refreshFxCard(); suggestReadyRef(); }, POLL_MS);
