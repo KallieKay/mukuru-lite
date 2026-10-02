@@ -26,6 +26,7 @@
       "phone": "+27000000001",
       "pin": "1234",
       "language": null,
+      "voiceCall": true,
       "recipients": [
         {
           "id": "mama",
@@ -33,7 +34,8 @@
           "city": "Harare",
           "countryCode": "ZW",
           "phone": "+263770000001",
-          "language": "sn"
+          "language": "en",
+          "voiceCall": true
         },
         {
           "id": "tendai",
@@ -41,7 +43,8 @@
           "city": "Bulawayo",
           "countryCode": "ZW",
           "phone": "+263770000002",
-          "language": "en"
+          "language": "en",
+          "voiceCall": false
         }
       ]
     }

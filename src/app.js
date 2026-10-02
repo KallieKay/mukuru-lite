@@ -10,6 +10,7 @@ const { UserService } = require('./services/users');
 const { QuoteService } = require('./services/quotes');
 const { TransferService } = require('./services/transfers');
 const { NotificationService } = require('./services/notifications');
+const { VoiceCallService }    = require('./services/voice');
 const { SessionStore } = require('./services/sessions');
 const { createApiRouter } = require('./routes/api');
 const { createUssdRouter } = require('./routes/ussd');
@@ -28,16 +29,23 @@ function createServices(seed, config) {
     fees: seed.fees, limits: seed.limits, fx, users, rateLockMs: config.rateLockMs,
   });
   const transfers     = new TransferService({ quotes, users, stepMs: config.stepMs });
-  const notifications = new NotificationService({ transfers, users });
+  const voice         = new VoiceCallService({
+    notifications: null,          // passed after notifications is constructed below
+    gatewayUrl:    config.voiceGatewayUrl,
+    gatewayApiKey: config.voiceGatewayApiKey,
+    retryDelaysMs: config.voiceRetryDelaysMs,
+  });
+  const notifications = new NotificationService({ transfers, users, voice });
+  voice.notifications = notifications;  // complete the circular reference
   const sessions      = new SessionStore(config.ussdSessionMs);
-  return { fx, users, quotes, transfers, notifications, sessions };
+  return { fx, users, quotes, transfers, notifications, voice, sessions };
 }
 
 /** Clears all state back to the seed, so every rehearsal starts the same way. */
-function resetServices({ fx, users, quotes, transfers, notifications, sessions }) {
+function resetServices({ fx, users, quotes, transfers, notifications, voice, sessions }) {
   transfers.reset();
   quotes.reset();
-  notifications.reset();
+  notifications.reset();   // also calls voice.reset() internally
   sessions.reset();
   users.reset();
   fx.reset();
@@ -73,6 +81,7 @@ function createApp({ seed, config }) {
   const stop = () => {
     services.fx.stop();
     services.transfers.stop();
+    services.voice.stop();
   };
   return { app, services, stop };
 }

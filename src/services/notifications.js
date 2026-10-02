@@ -2,6 +2,7 @@
 
 const i18n = require('../i18n');
 const { formatMoney } = require('../lib/money');
+const { VoiceCallService } = require('./voice');
 
 // Which stage changes send a message to whom. "sent" goes out immediately, so Thandi
 // gets her reference even if the USSD session drops before she sees the last screen.
@@ -20,10 +21,13 @@ const RULES = {
 class NotificationService {
   /**
    * @param {{ transfers: import('./transfers').TransferService,
-   *           users: import('./users').UserService, now?: () => number }} deps
+   *           users: import('./users').UserService,
+   *           voice?: import('./voice').VoiceCallService,
+   *           now?: () => number }} deps
    */
-  constructor({ transfers, users, now = Date.now }) {
+  constructor({ transfers, users, voice = null, now = Date.now }) {
     this.users    = users;
+    this.voice    = voice;
     this.now      = now;
     this.messages = [];
     this.nextId   = 1;   // keeps counting across resets, so phones always spot new messages
@@ -51,6 +55,7 @@ class NotificationService {
 
   reset() {
     this.messages = [];
+    this.voice?.reset();
   }
 
   #onStatus(transfer, { collectionCode } = {}) {
@@ -64,6 +69,36 @@ class NotificationService {
         code:     role === 'recipient' ? collectionCode : undefined,
         at:       this.now(),
       });
+    }
+
+    // Fire a TTS call to the sender when the transfer is sent (voice receipt).
+    if (transfer.status === 'sent' && this.voice) {
+      const sender = this.users.get(transfer.userId);
+      if (sender?.voiceCall) {
+        const lang      = sender.language ?? i18n.DEFAULT_LANGUAGE;
+        const recipient = this.#party(transfer.recipientId);
+        const voiceText = i18n.t(lang, 'voice.sender.sent', {
+          name:      sender.name,
+          amount:    formatMoney(transfer.amountCents, 'R'),
+          recipient: i18n.recipientName(lang, recipient),
+          ref:       transfer.id,
+        });
+        this.voice.call(sender, voiceText, transfer.id);
+      }
+    }
+
+    // Fire a TTS call to the recipient when money is ready to collect.
+    if (transfer.status === 'ready' && this.voice) {
+      const recipient = this.#party(transfer.recipientId);
+      if (recipient?.voiceCall) {
+        const lang      = recipient.language ?? i18n.DEFAULT_LANGUAGE;
+        const sender    = this.users.get(transfer.userId);
+        const voiceText = i18n.t(lang, 'voice.recipient.ready', {
+          name:   i18n.recipientName(lang, recipient),
+          sender: sender.name,
+        });
+        this.voice.call(recipient, voiceText, transfer.id);
+      }
     }
   }
 

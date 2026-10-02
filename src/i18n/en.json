@@ -61,6 +61,9 @@
     }
   },
   "voice": {
+    "sender": {
+      "sent": "Hello {name}. Your transfer of {amount} to {recipient} has been sent. Reference {ref}."
+    },
     "recipient": {
       "ready": "Hello {name}. Your money from {sender} has arrived. Take your ID to a Mukuru agent."
     }

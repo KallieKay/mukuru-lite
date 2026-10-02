@@ -85,6 +85,21 @@ function createApiRouter({ fx, users, quotes, transfers, notifications }, { demo
     res.json(notifications.inbox(req.params.partyId, lang));
   });
 
+  // Voice call preference for a recipient. Body: { voiceCall: true|false }
+  // e.g. POST /api/recipients/mama/preferences
+  router.post('/recipients/:recipientId/preferences', (req, res) => {
+    const sender    = users.get(DEMO_USER_ID);
+    const recipient = users.recipient(sender, req.params.recipientId);
+    const { voiceCall } = req.body ?? {};
+    if (voiceCall !== undefined) users.setVoiceCall(recipient, voiceCall);
+    res.json({ recipientId: recipient.id, voiceCall: recipient.voiceCall ?? false });
+  });
+
+  // Voice call log: shows TTS calls that have been fired (for the simulator UI).
+  router.get('/voice-calls', (req, res) => {
+    res.json(notifications.voice?.callLog() ?? []);
+  });
+
   // Wipes all state back to the seed. Only exists when the server runs with DEMO=1.
   router.post('/demo/fx-move', (req, res) => {
     if (!demoMode) throw new AppError('not_found', 404);

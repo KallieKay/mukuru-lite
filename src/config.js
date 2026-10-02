@@ -23,6 +23,13 @@ function loadConfig(env = process.env) {
     pinMaxTries:   3,
     pinLockMs:     toNumber(env.PIN_LOCK_MS, 60_000),
     ussdSessionMs: 3 * 60 * 1000,
+    // Voice call gateway. Leave unset to use mock/log mode (no credentials needed).
+    voiceGatewayUrl:    env.VOICE_GATEWAY_URL    ?? '',
+    voiceGatewayApiKey: env.VOICE_GATEWAY_API_KEY ?? '',
+    // Retry delays in ms between each attempt (default: 1 min, 5 min, 15 min).
+    voiceRetryDelaysMs: (env.VOICE_RETRY_DELAYS_MS ?? '60000,300000,900000')
+                          .split(',')
+                          .map(n => toNumber(n.trim(), 60_000)),
   });
 }
 

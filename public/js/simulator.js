@@ -288,7 +288,9 @@ async function resetDemo() {
   el.dev.textContent = 'No request yet.';
   el.agent.form.reset();
   setNote(el.agent.note, '');
+  voiceLogState.size = 0;
   await refreshInbox();
+  await refreshVoiceLog();
   showNote('Demo reset: no transfers, language will be asked again.', 'ok');
 }
 
@@ -321,7 +323,90 @@ async function simulateRetry() {
     : `Different ref ${after}: double charge!`);
 }
 
-// ── Wiring ───────────────────────────────────────────────────────────────────
+// ── Voice call log ────────────────────────────────────────────────────────────
+const voiceLogState = { size: 0 };
+
+const LANG_BCP47 = { sn: 'sn-ZW', en: 'en-ZA' };
+
+function speakVoiceCall(call) {
+  if (!window.speechSynthesis) return;
+  speechSynthesis.cancel();
+  const utt  = new SpeechSynthesisUtterance(call.voiceText);
+  utt.lang   = LANG_BCP47[call.language] ?? 'en-ZA';
+  utt.rate   = 0.92;
+  utt.pitch  = 1;
+  speechSynthesis.speak(utt);
+}
+
+function buildCallCard(c) {
+  const who  = c.recipientId === SENDER_ID ? 'Thandi' : 'Mama';
+  const icon = c.success ? '✅' : `🔄 Attempt ${c.attempt}`;
+  const item = document.createElement('div');
+  item.className = `sms voice-call${c.success ? '' : ' voice-pending'}`;
+
+  const header = document.createElement('strong');
+  header.textContent = `${icon} ${who} — ${c.transferRef}`;
+
+  const text = document.createElement('div');
+  text.className = 'voice-text';
+  text.textContent = `"${c.voiceText}"`;
+
+  const footer = document.createElement('div');
+  footer.style.display = 'flex';
+  footer.style.justifyContent = 'space-between';
+  footer.style.alignItems = 'center';
+  footer.style.marginTop = '4px';
+
+  const stamp = document.createElement('time');
+  stamp.textContent = new Date().toLocaleTimeString();
+
+  const replayBtn = document.createElement('button');
+  replayBtn.className = 'voice-replay';
+  replayBtn.textContent = '🔊 Replay';
+  replayBtn.addEventListener('click', () => speakVoiceCall(c));
+
+  footer.append(stamp, replayBtn);
+  item.append(header, text, footer);
+  return item;
+}
+
+async function refreshVoiceLog() {
+  let calls;
+  try {
+    calls = await fetch('/api/voice-calls').then(r => r.json());
+  } catch {
+    return;
+  }
+
+  const log = $('voice-log');
+
+  if (!calls.length) {
+    if (voiceLogState.size !== 0) {
+      voiceLogState.size = 0;
+      const empty = document.createElement('div');
+      empty.className = 'empty';
+      empty.textContent = 'No calls yet.';
+      log.replaceChildren(empty);
+    }
+    return;
+  }
+
+  // Speak any brand-new calls (ones we haven't seen before).
+  if (calls.length > voiceLogState.size) {
+    const newCalls = calls.slice(voiceLogState.size);
+    // Speak them in sequence with a short gap.
+    newCalls.forEach((c, i) => {
+      setTimeout(() => speakVoiceCall(c), i * 500);
+    });
+  }
+
+  if (calls.length === voiceLogState.size) return;
+  voiceLogState.size = calls.length;
+
+  log.replaceChildren(...calls.slice().reverse().map(buildCallCard));
+}
+
+
 $('keypad').addEventListener('click', e => {
   if (e.target.tagName !== 'BUTTON') return;
   if (el.overlay.classList.contains('open') && !el.reply.hidden) {
@@ -364,4 +449,5 @@ document.addEventListener('keydown', e => {
 
 refreshInbox();
 refreshFxCard();
-setInterval(() => { refreshInbox(); refreshFxCard(); suggestReadyRef(); }, POLL_MS);
+refreshVoiceLog();
+setInterval(() => { refreshInbox(); refreshFxCard(); refreshVoiceLog(); suggestReadyRef(); }, POLL_MS);

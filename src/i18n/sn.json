@@ -62,6 +62,9 @@
     }
   },
   "voice": {
+    "sender": {
+      "sent": "Mhoro {name}. Mari yako ye{amount} yatumirwa kuna {recipient}. Ref {ref}."
+    },
     "recipient": {
       "ready": "Mhoro {name}. Mari yenyu kubva kuna {sender} yasvika. Endai kuMukuru nechitupa chenyu."
     }

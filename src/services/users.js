@@ -66,6 +66,11 @@ class UserService {
     user.language = language;
   }
 
+  /** Opts a recipient in or out of TTS voice call confirmations. */
+  setVoiceCall(recipient, enabled) {
+    recipient.voiceCall = Boolean(enabled);
+  }
+
   /** Throws `wrong_pin` or `pin_locked`; resets the failure count on success. */
   verifyPin(user, pin) {
     const now = this.now();
