@@ -8,7 +8,8 @@
     "sent": "Sent",
     "in_transit": "On the way",
     "ready": "Ready to collect",
-    "collected": "Collected"
+    "collected": "Collected",
+    "failed": "Failed"
   },
   "ussd": {
     "main": "Mukuru\n1 Send money\n2 Where is my money?\n3 Help\n4 Language",
@@ -19,7 +20,19 @@
     "sent": "Sent! Ref {ref}.\nWe will SMS you when {name} collects.",
     "track": "{ref} to {name}:\n{stages}",
     "noTransfer": "No transfers yet. Dial again and choose 1 to send.",
-    "help": "Dial *130*999# and choose 1 to send. Agents open Mon-Sat 8am-6pm.",
+    "navigation": "0 Back\n00 Menu",
+    "amountHint": "Enter the amount in rands.",
+    "quoteHint": "Check the amount and recipient before confirming.",
+    "pinHint": "Never share your PIN.",
+    "help": {
+      "menu": "Help\n1 How to send money\n2 Where is my money?\n3 Fees and rates\n4 How your receiver collects\n5 PIN and staying safe\n6 Talk to an agent",
+      "send": "To send money, choose 1 Send money, pick your receiver, enter the amount, confirm, then enter your PIN. You get an SMS with a reference straight away.",
+      "track": "Choose 2 on the main menu to see your transfer stages. You get SMS updates at each step.",
+      "fees": "Your fee is {flatFee} + {percent}% (rounded down to {roundTo}). You see the exact fee and payout before you confirm. Your rate locks for {minutes} min.",
+      "collect": "Tell your receiver to take their ID and the secret code from their SMS to a Mukuru agent. The reference alone is not enough. Never share the code.",
+      "safety": "Never share your PIN or code. We never ask you for them by phone. Three wrong PIN attempts lock your account temporarily.",
+      "agent": "Call an agent on {phone}; they are available {hours}."
+    },
     "languageReset": "Language cleared. Dial again to choose.",
     "cancelled": "Cancelled. Nothing was sent.",
     "invalid": "Invalid choice. Dial again.",
@@ -39,7 +52,8 @@
       "sent": "Mukuru: {amount} sent to {name}. Ref {ref}. {name} gets {received}. Keep this SMS.",
       "in_transit": "Mukuru: {ref} is on the way to {name}.",
       "ready": "Mukuru: {ref} is ready. {name} can collect {received} at a Mukuru agent.",
-      "collected": "Mukuru: {name} collected {received} ({ref}). No need to call."
+      "collected": "Mukuru: {name} collected {received} ({ref}). No need to call.",
+      "failed": "Mukuru: {ref} failed. {amount} did NOT reach {name}; being returned or not charged. Dial *130*999# or reply TRY to retry."
     },
     "recipient": {
       "ready": "You have {received} from {sender}.\nRef {ref}. Code {code}.\nTake your ID and code to a Mukuru agent. Never share your code.",

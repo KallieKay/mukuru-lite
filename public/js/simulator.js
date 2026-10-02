@@ -292,6 +292,21 @@ async function resetDemo() {
   showNote('Demo reset: no transfers, language will be asked again.', 'ok');
 }
 
+async function failLatestTransfer() {
+  const transfers = await fetch('/api/transfers').then(r => r.json());
+  const latest = transfers.filter(t => ['sent', 'in_transit'].includes(t.status)).at(-1);
+  if (!latest) return showNote('No active transfer can be failed.', 'error');
+
+  const res = await fetch(`/api/demo/transfers/${encodeURIComponent(latest.id)}/fail`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ reason: 'demo_failure' }),
+  });
+  if (!res.ok) return showNote('Failure simulation is only available in demo mode.', 'error');
+  await refreshInbox();
+  showNote(`${latest.id} failed. The sender was notified and the daily limit restored.`, 'ok');
+}
+
 // Re-sends the exact last request, as a gateway does after a dropped connection.
 // The reply, and the transfer ref inside it, must be identical.
 async function simulateRetry() {
@@ -308,12 +323,25 @@ async function simulateRetry() {
 
 // ── Wiring ───────────────────────────────────────────────────────────────────
 $('keypad').addEventListener('click', e => {
-  if (e.target.tagName === 'BUTTON') el.number.textContent += e.target.textContent;
+  if (e.target.tagName !== 'BUTTON') return;
+  if (el.overlay.classList.contains('open') && !el.reply.hidden) {
+    el.reply.value += e.target.textContent;
+    el.reply.focus();
+  } else {
+    el.number.textContent += e.target.textContent;
+  }
 });
-$('delete').addEventListener('click', () => { el.number.textContent = el.number.textContent.slice(0, -1); });
+$('delete').addEventListener('click', () => {
+  if (el.overlay.classList.contains('open') && !el.reply.hidden) {
+    el.reply.value = el.reply.value.slice(0, -1);
+  } else {
+    el.number.textContent = el.number.textContent.slice(0, -1);
+  }
+});
 $('call').addEventListener('click', () => dial(el.number.textContent));
 $('quick-dial').addEventListener('click', () => { el.number.textContent = SERVICE_CODE; dial(SERVICE_CODE); });
 $('retry').addEventListener('click', simulateRetry);
+$('fail-transfer').addEventListener('click', failLatestTransfer);
 $('reset').addEventListener('click', resetDemo);
 el.fx.up.addEventListener('click', () => demoFxMove('up'));
 el.fx.down.addEventListener('click', () => demoFxMove('down'));

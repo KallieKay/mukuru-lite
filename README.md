@@ -20,10 +20,19 @@ and Thandi gets "Collected" back. No data, no app and no phone call needed.
 Thandi's PIN: **1234**. All data is synthetic and in memory; restarting, or
 **Reset demo** (demo mode only), puts everything back to the seed.
 
+## USSD help and navigation
+Choose **3 Help** for guidance on sending, tracking, fees and rates, how your receiver collects,
+PIN safety, and contacting an agent. The exact fee and payout are shown before confirmation.
+Agents are available Mon-Sat 8am-7pm, Sun 8am-12pm; call **0860018555**.
+
+On continuing screens, enter **0** to go back one step or **00** to return to the main menu.
+The sender's language is preserved while navigating. On the quote screen, **2 Cancel** returns
+to the main menu. Only an exact `0` or `00` is navigation; other input values are unchanged.
+
 | Env var | Default | Effect |
 |---|---|---|
 | `PORT` | 3000 | |
-| `DEMO` | off | `1` enables `POST /api/demo/reset` and the Reset demo button |
+| `DEMO` | off | `1` enables demo reset, FX movement, and transfer failure controls |
 | `FX_STATIC` | off | `1` freezes rates, so R1,500 always gives $94.58 |
 | `STEP_MS` | 6000 | ms between tracker stages (sent -> on the way -> ready) |
 | `FX_TICK_MS` | 30000 | ms between rate moves |
@@ -35,6 +44,7 @@ Thandi's PIN: **1234**. All data is synthetic and in memory; restarting, or
 3. Tick **Drop the next reply**, then enter PIN `1234`. The phone shows "Connection problem", but
    Thandi's SMS inbox already has "R1500 yatumirwa kuna Amai. Ref MK..." She knows it went through.
 4. **Simulate network retry**: the phone resends, and gets the same ref back. Charged once.
+  Use **Fail latest active transfer** to simulate a failed transfer; the sender is notified and the daily limit is restored.
 5. At "ready", Mama's phone buzzes with her SMS, which includes a secret 6-digit code. Press **Teerera**
    for the voice note (the code is never read aloud).
 6. At the **Mukuru agent** card, show that the reference alone is not enough: an
@@ -84,6 +94,7 @@ Thandi's PIN: **1234**. All data is synthetic and in memory; restarting, or
 | `GET /api/inbox/:partyId?lang=en` | `thandi` or `mama`; defaults to the person's own language |
 | `GET /api/fx` | |
 | `POST /api/demo/reset` | Demo mode only; 404 otherwise |
+| `POST /api/demo/transfers/:id/fail` `{reason}` | Demo mode only; fails an undelivered transfer and restores the daily limit |
 | `POST /ussd` | Gateway format (Africa's Talking style): `sessionId, phoneNumber, text`; replies `CON`/`END` |
 
 Errors are JSON: `{ "error": "<code>", ...details }`.

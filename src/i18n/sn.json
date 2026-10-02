@@ -1,6 +1,6 @@
 {
   "language": "ChiShona",
-  "_note": "First draft. Have a native speaker review before judging.",
+  "_note": "Draft Shona text, including failed-transfer and USSD help messages, needs native-speaker review before judging.",
   "recipients": {
     "mama": "Amai",
     "tendai": "Tendai"
@@ -9,7 +9,8 @@
     "sent": "Yatumirwa",
     "in_transit": "Iri munzira",
     "ready": "Yakagadzirira kutorwa",
-    "collected": "Yatorwa"
+    "collected": "Yatorwa",
+    "failed": "Yatadza"
   },
   "ussd": {
     "main": "Mukuru\n1 Tumira mari\n2 Mari yangu iripi?\n3 Rubatsiro\n4 Mutauro",
@@ -20,7 +21,19 @@
     "sent": "Yatumirwa! Ref {ref}.\nTichakunyorera kana {name} vatora.",
     "track": "{ref} kuna {name}:\n{stages}",
     "noTransfer": "Hapana kutumirwa. Daidza zvakare, sarudza 1.",
-    "help": "Daidza *130*999#, sarudza 1 kutumira. Vamiririri: Muvhuro-Mugovera 8am-6pm.",
+    "navigation": "0 Dzokera\n00 Menyu",
+    "amountHint": "Isa mari yacho mumaRand.",
+    "quoteHint": "Tarisa mari nemunhu wauri kutumira kwaari usati wasimbisa.",
+    "pinHint": "Usamboudza munhu PIN yako.",
+    "help": {
+      "menu": "Rubatsiro\n1 Kutumira mari\n2 Mari yangu iripi?\n3 Muripo nemitengo\n4 Maitiro anotora mari munhu waunotumira kwaari\n5 PIN nekuchengeteka\n6 Taura nemumiririri",
+      "send": "Kuti utumire mari, sarudza 1 Tumira mari, sarudza munhu waunotumira kwaari, isa mari, simbisa, woisa PIN yako. Uchawana SMS ine reference pakarepo.",
+      "track": "Sarudza 2 pamenu huru kuti uone matanho emari yako. Uchawana SMS padanho rimwe nerimwe.",
+      "fees": "Muripo wako ndi{flatFee} + {percent}% (unodzikiswa kusvika {roundTo}). Uchaona muripo chaiwo nemari yauchawana usati wasimbisa. Mutengo wako unokiyiwa {minutes} min.",
+      "collect": "Udza waunotumira mari kwaari kuti aende kumumiririri neID nekodhi iri muSMS yake. Reference yoga haina kukwana. Usambogovana kodhi.",
+      "safety": "Usamboudza munhu PIN yako kana kodhi. Hatikumbiri kwauri parunhare. PIN isiriyo katatu inokiya akaundi yako kwechinguva.",
+      "agent": "Fonera mumiririri pa{phone}; vanoshanda {hours}."
+    },
     "languageReset": "Mutauro wabviswa. Daidza zvakare.",
     "cancelled": "Kumiswa. Hapana chatumirwa.",
     "invalid": "Sarudzo haina kunaka. Daidza zvakare.",
@@ -40,7 +53,8 @@
       "sent": "Mukuru: {amount} yatumirwa kuna {name}. Ref {ref}. {name} vachawana {received}. Chengeta meseji iyi.",
       "in_transit": "Mukuru: {ref} iri munzira kuna {name}.",
       "ready": "Mukuru: {ref} yakagadzirira. {name} vanogona kutora {received} kumumiririri waMukuru.",
-      "collected": "Mukuru: {name} vatora {received} ({ref}). Hapana chikonzero chekufona."
+      "collected": "Mukuru: {name} vatora {received} ({ref}). Hapana chikonzero chekufona.",
+      "failed": "Mukuru: {ref} yatadza. {amount} HAINA kusvika kuna {name}; mari iri kudzoserwa kana haina kubviswa. Daidza *130*999# kana pindura TRY kuti uedze zvakare."
     },
     "recipient": {
       "ready": "Une {received} kubva ku{sender}.\nRef {ref}. Kodhi {code}.\nTora ID nekodhi kumumiririri waMukuru. Usaudza munhu kodhi yako.",

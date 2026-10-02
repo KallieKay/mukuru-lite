@@ -10,6 +10,7 @@ const RULES = {
   in_transit: ['sender'],
   ready:      ['sender', 'recipient'],
   collected:  ['sender', 'recipient'],
+  failed:     ['sender'],
 };
 
 /**

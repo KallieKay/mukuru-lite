@@ -73,6 +73,11 @@ function createApiRouter({ fx, users, quotes, transfers, notifications }, { demo
     res.json(transferView(transfers.collect(req.params.id, { code, idChecked })));
   });
 
+  router.post('/demo/transfers/:id/fail', (req, res) => {
+    if (!demoMode) throw new AppError('not_found', 404);
+    res.json(transferView(transfers.fail(req.params.id, req.body?.reason)));
+  });
+
   router.get('/inbox/:partyId', (req, res) => {
     const { lang } = req.query;
     if (lang !== undefined && !i18n.isSupported(lang))

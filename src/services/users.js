@@ -96,6 +96,11 @@ class UserService {
     user.sentToday += cents;
   }
 
+  restoreSend(user, cents) {
+    this.#rollDay(user);
+    user.sentToday = Math.max(0, user.sentToday - cents);
+  }
+
   #rollDay(user) {
     const today = startOfDay(this.now());
     if (user.sentDay !== today) {

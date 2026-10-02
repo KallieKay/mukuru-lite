@@ -5,6 +5,9 @@ const toNumber = (value, fallback) =>
 
 const toBool = value => value === '1' || value === 'true';
 
+const AGENT_HOURS = 'Mon-Sat 8am-7pm, Sun 8am-12pm';
+const AGENT_PHONE = '0860018555';
+
 /**
  * Reads runtime settings from environment variables.
  * Every value has a demo-friendly default, so `npm start` works with no setup.
@@ -23,4 +26,4 @@ function loadConfig(env = process.env) {
   });
 }
 
-module.exports = { loadConfig };
+module.exports = { AGENT_HOURS, AGENT_PHONE, loadConfig };

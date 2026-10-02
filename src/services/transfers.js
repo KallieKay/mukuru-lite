@@ -4,7 +4,7 @@ const { EventEmitter } = require('node:events');
 const { AppError } = require('../lib/errors');
 const { hashSecret, verifySecret, numericCode } = require('../lib/secrets');
 
-const STAGES = Object.freeze(['sent', 'in_transit', 'ready', 'collected']);
+const STAGES = Object.freeze(['sent', 'in_transit', 'ready', 'collected', 'failed']);
 const CODE_DIGITS    = 6;
 const CODE_MAX_TRIES = 3;
 
@@ -16,7 +16,8 @@ const toPublic = ({ collection, ...transfer }) => ({
 });
 
 /**
- * Transfer lifecycle: sent -> in_transit -> ready (automatic) -> collected (agent).
+ * Transfer lifecycle: sent -> in_transit -> ready (automatic) -> collected (agent),
+ * or failed while sent or in transit.
  * Emits `status` (transfer, extras) on every stage change. When a transfer becomes ready the
  * extras carry the plain collection code, once, for the receiver's SMS.
  */
@@ -121,6 +122,21 @@ class TransferService extends EventEmitter {
     return toPublic(transfer);
   }
 
+  /** Fails an undelivered transfer and restores the sender's daily allowance. */
+  fail(id, reason) {
+    const transfer = this.#find(id);
+    if (transfer.status !== 'sent' && transfer.status !== 'in_transit')
+      throw new AppError('not_failable', 409, { status: transfer.status });
+
+    transfer.status = 'failed';
+    const stage = { status: 'failed', at: this.now() };
+    if (typeof reason === 'string' && reason.trim()) stage.reason = reason.trim().slice(0, 120);
+    transfer.stages.push(stage);
+    this.users.restoreSend(this.users.get(transfer.userId), transfer.amountCents);
+    this.emit('status', toPublic(transfer), {});
+    return toPublic(transfer);
+  }
+
   /** Cancels pending stage timers (used on shutdown and in tests). */
   stop() {
     for (const timer of this.timers) clearTimeout(timer);
@@ -150,6 +166,7 @@ class TransferService extends EventEmitter {
   }
 
   #advance(transfer, status) {
+    if (transfer.status === 'failed') return;
     const extras = {};
     if (status === 'ready') {
       extras.collectionCode = numericCode(CODE_DIGITS);

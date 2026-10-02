@@ -159,6 +159,10 @@ test('REST API', async t => {
     assert.equal((await api('/api/demo/fx-move', { method: 'POST' })).status, 404);
   });
 
+  await t.test('demo transfer failure is not available outside demo mode', async () => {
+    assert.equal((await api('/api/demo/transfers/MK12345/fail', { method: 'POST' })).status, 404);
+  });
+
   await t.test('FX movement updates the market but not the locked transfer rate', async () => {
     const server = await startTestServer({ DEMO: '1' });
     t.after(() => server.close());
@@ -221,4 +225,64 @@ test('demo reset clears everything back to the seed', async t => {
   assert.equal((await api('/api/transfers')).body.length, 0);
   assert.equal((await api('/api/inbox/thandi')).body.messages.length, 0);
   assert.match(await ussd('r2', ''), /^CON Mukuru\n1 English\n2 ChiShona/, 'language is asked again');
+});
+
+test('demo transfer failure notifies only the sender and restores the daily limit', async t => {
+  const server = await startTestServer({ DEMO: '1', STEP_MS: '30000' });
+  t.after(() => server.close());
+  const { api, ussd, services } = server;
+
+  const send = async key => {
+    const quote = (await api('/api/quotes', {
+      method: 'POST', body: { amount: '3000', recipientId: 'mama' },
+    })).body;
+    return api('/api/transfers', {
+      method: 'POST', headers: { 'Idempotency-Key': key },
+      body: { quoteId: quote.quoteId, pin: '1234' },
+    });
+  };
+
+  const created = await send('k-fail');
+  const failed = await api(`/api/demo/transfers/${created.body.id}/fail`, {
+    method: 'POST', body: { reason: 'demo_failure' },
+  });
+  assert.equal(failed.status, 200);
+  assert.equal(failed.body.status, 'failed');
+  assert.deepEqual(failed.body.stages.map(stage => stage.status), ['sent', 'failed']);
+
+  const senderMessages = (await api('/api/inbox/thandi')).body.messages
+    .filter(message => message.ref === created.body.id && message.status === 'failed');
+  const recipientMessages = (await api('/api/inbox/mama')).body.messages
+    .filter(message => message.ref === created.body.id && message.status === 'failed');
+  assert.equal(senderMessages.length, 1);
+  assert.equal(recipientMessages.length, 0);
+  assert.match(senderMessages[0].text, /R3000.*did NOT reach Mama/);
+  assert.match(senderMessages[0].text, /\*130\*999\#.*TRY/);
+  assert.ok(senderMessages[0].text.length < 160);
+  assert.ok(!/\b\d{6}\b/.test(senderMessages[0].text));
+
+  services.users.setLanguage(services.users.get('thandi'), 'en');
+  assert.match(await ussd('failed-track', '2'), /^END MK\d{5} to Mama:\n\[x\] Sent[\s\S]*\[x\] Failed/);
+
+  const next = await send('k-after-fail');
+  assert.equal(next.status, 201, 'failed attempt must not consume the daily limit');
+});
+
+test('a ready transfer cannot be failed', async t => {
+  const server = await startTestServer({ DEMO: '1', STEP_MS: '30' });
+  t.after(() => server.close());
+  const { api } = server;
+  const quote = (await api('/api/quotes', {
+    method: 'POST', body: { amount: '300', recipientId: 'mama' },
+  })).body;
+  const created = await api('/api/transfers', {
+    method: 'POST', headers: { 'Idempotency-Key': 'k-ready-fail' },
+    body: { quoteId: quote.quoteId, pin: '1234' },
+  });
+  await wait(100);
+
+  const failed = await api(`/api/demo/transfers/${created.body.id}/fail`, { method: 'POST' });
+  assert.equal(failed.status, 409);
+  assert.equal(failed.body.error, 'not_failable');
+  assert.equal((await api(`/api/transfers/${created.body.id}`)).body.status, 'ready');
 });
